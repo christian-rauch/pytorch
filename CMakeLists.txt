@@ -284,6 +284,8 @@ if(USE_SYSTEM_LIBS)
   set(USE_SYSTEM_XNNPACK ON)
 endif()
 
+option(GIT_SUBMODULE "Fetch git submodules" ON)
+
 # Used when building Caffe2 through setup.py
 option(BUILDING_WITH_TORCH_LIBS "Tell cmake if Caffe2 is being built alongside torch libs" ON)
 
@@ -453,6 +455,13 @@ endif()
 # TODO: merge the following 3 files into cmake/public/utils.cmake.
 include(cmake/Utils.cmake)
 include(cmake/public/utils.cmake)
+
+# ---[ git submodules
+if(GIT_SUBMODULE AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+  find_package(Git REQUIRED)
+  execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+endif()
 
 # ---[ Version numbers for generated libraries
 file(READ version.txt TORCH_DEFAULT_VERSION)
